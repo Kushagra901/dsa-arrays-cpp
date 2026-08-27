@@ -1,0 +1,18 @@
+# Compiled Executables and Object Files
+*.exe
+*.o
+*.obj
+*.out
+*.app
+
+# IDE and Editor Files
+.vscode/
+.vs/
+.idea/
+*.swp
+*.swo
+
+# Temporary and Cache directories
+.deepeval/
+__pycache__/
+*.tmp
