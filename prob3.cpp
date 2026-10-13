@@ -1,15 +1,24 @@
 /**
  * ============================================================================
- * PROBLEM: Check if an Array is Sorted
+ * PROBLEM: Check if an Array is Sorted (and Sorted & Rotated)
  * ============================================================================
  * 
  * 📌 PROBLEM DESCRIPTION:
  *    Given an array `a` of `n` integers, determine if the array is sorted in 
  *    non-decreasing (ascending) order. Return `true` if sorted, else `false`.
+ *    Also includes the extension for LeetCode 1752: Check if an array was 
+ *    originally sorted and then rotated by some number of positions.
  * 
  * 💡 COMPLEXITY ANALYSIS:
- *    - Time Complexity:  O(N) - Single linear traversal comparing adjacent elements
- *    - Space Complexity: O(1) - Constant auxiliary space
+ *    - Brute Force Approach (Pairwise Comparison):
+ *        • Time Complexity:  O(N^2) - Comparing every element with all subsequent elements
+ *        • Space Complexity: O(1) - In-place comparison
+ *    - Optimal Approach (Adjacent Comparison):
+ *        • Time Complexity:  O(N) - Single linear traversal comparing adjacent elements
+ *        • Space Complexity: O(1) - Constant auxiliary space
+ *    - Extension (Sorted and Rotated - LeetCode 1752):
+ *        • Time Complexity:  O(N) - Count circular drops `arr[i] > arr[(i + 1) % n]`
+ *        • Space Complexity: O(1) - Constant auxiliary space
  * 
  * ----------------------------------------------------------------------------
  * 🎯 TOP INTERVIEW QUESTIONS & DEEP-DIVE CONCEPTS:
@@ -45,7 +54,25 @@
 using namespace std;
 
 // ============================================================================
-// OPTIMAL APPROACH: Linear Adjacent Comparison
+// 1. BRUTE FORCE APPROACH: Pairwise Comparison
+// Time Complexity: O(N^2) | Space Complexity: O(1)
+// ============================================================================
+
+bool isSortedBruteForce(const vector<int> &arr, int n) {
+    // Check every element against all subsequent elements
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            // If any subsequent element is smaller, array is not sorted
+            if (arr[j] < arr[i]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// ============================================================================
+// 2. OPTIMAL APPROACH: Linear Adjacent Comparison
 // Time Complexity: O(N) | Space Complexity: O(1)
 // ============================================================================
 
@@ -60,14 +87,22 @@ bool isSorted(int n, const vector<int> &a) {
     return true; // All adjacent pairs satisfied a[i] >= a[i-1]
 }
 
-// Extension: Check if array is sorted and rotated (LeetCode 1752)
+// ============================================================================
+// 3. EXTENSION: Check if Array is Sorted and Rotated (LeetCode 1752)
+// Time Complexity: O(N) | Space Complexity: O(1)
+// ============================================================================
+
 bool isSortedAndRotated(const vector<int> &a, int n) {
+    if (n <= 1) return true;
+    
     int countDrops = 0;
     for (int i = 0; i < n; i++) {
+        // Circular comparison: compare last element with first element using modulo
         if (a[i] > a[(i + 1) % n]) {
             countDrops++;
         }
     }
+    // A sorted and rotated array can have at most one inversion point / drop
     return countDrops <= 1;
 }
 
@@ -76,17 +111,18 @@ bool isSortedAndRotated(const vector<int> &a, int n) {
 // ============================================================================
 
 int main() {   
-    vector<int> arr = {1, 2, 6, 3, 4, 5};
-    int n = arr.size();
+    vector<int> arr1 = {1, 2, 3, 4, 5};
+    vector<int> arr2 = {3, 4, 5, 1, 2};
+    vector<int> arr3 = {2, 1, 3, 4};
 
-    bool sorted = isSorted(n, arr);
+    cout << "--- 1. Testing Standard Sorted Check ---" << endl;
+    cout << "arr1 is sorted (Optimal): " << (isSorted(arr1.size(), arr1) ? "Yes" : "No") << endl;
+    cout << "arr3 is sorted (Optimal): " << (isSorted(arr3.size(), arr3) ? "Yes" : "No") << endl;
 
-    cout << "Array: ";
-    for (int x : arr) cout << x << " ";
-    cout << endl;
-
-    cout << "Is sorted: " << (sorted ? "Yes (true)" : "No (false)") << endl;
-    cout << "Is sorted & rotated: " << (isSortedAndRotated(arr, n) ? "Yes" : "No") << endl;
+    cout << "\n--- 2. Testing Sorted & Rotated (LeetCode 1752) ---" << endl;
+    cout << "arr1 is sorted & rotated: " << (isSortedAndRotated(arr1, arr1.size()) ? "Yes" : "No") << endl;
+    cout << "arr2 is sorted & rotated: " << (isSortedAndRotated(arr2, arr2.size()) ? "Yes" : "No") << endl;
+    cout << "arr3 is sorted & rotated: " << (isSortedAndRotated(arr3, arr3.size()) ? "Yes" : "No") << endl;
 
     return 0;
 }

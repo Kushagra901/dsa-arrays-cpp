@@ -11,12 +11,12 @@
  *    of `arr` hold the result.
  * 
  * 💡 COMPLEXITY ANALYSIS:
+ *    - Brute Force Approach (Using Hash Set):
+ *        • Time Complexity:  O(N) - Insert all elements into unordered_set and copy back
+ *        • Space Complexity: O(N) - Auxiliary space for storing unique elements in set
  *    - Optimal Approach (Two Pointers - In-Place):
  *        • Time Complexity:  O(N) - Single pass through the array of size N
  *        • Space Complexity: O(1) - In-place modification without extra memory
- *    - Brute Force Approach (Using Hash Set):
- *        • Time Complexity:  O(N log N) or O(N)
- *        • Space Complexity: O(N) - Extra space for set
  * 
  * ----------------------------------------------------------------------------
  * 🎯 TOP INTERVIEW QUESTIONS & DEEP-DIVE CONCEPTS:
@@ -49,11 +49,35 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_set>
 
 using namespace std;
 
 // ============================================================================
-// OPTIMAL APPROACH: Two Pointers (Slow & Fast Pointer)
+// 1. BRUTE FORCE APPROACH: Using Hash Set
+// Time Complexity: O(N) | Space Complexity: O(N)
+// ============================================================================
+
+int removeDuplicatesBruteForce(vector<int> &nums) {
+    int n = nums.size();
+    if (n == 0) return 0;
+
+    unordered_set<int> seen;
+    int index = 0;
+
+    // Preserve order while collecting unique elements
+    for (int num : nums) {
+        if (seen.find(num) == seen.end()) {
+            seen.insert(num);
+            nums[index] = num;
+            index++;
+        }
+    }
+    return index;
+}
+
+// ============================================================================
+// 2. OPTIMAL APPROACH: Two Pointers (Slow & Fast Pointer)
 // Time Complexity: O(N) | Space Complexity: O(1)
 // ============================================================================
 
@@ -65,6 +89,7 @@ int removeDuplicates(vector<int> &arr, int n) {
 
     // Fast pointer `j` scans through the array
     for (int j = 1; j < n; j++) {
+        // When a new distinct element is discovered:
         if (arr[i] != arr[j]) {
             arr[i + 1] = arr[j]; // Place the new unique element next to `i`
             i++;                 // Advance slow pointer

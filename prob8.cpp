@@ -1,59 +1,61 @@
 /**
  * ============================================================================
- * PROBLEM: Move All Zeroes to the End of the Array (Brute Force Approach)
+ * PROBLEM: Move Zeroes to End
  * ============================================================================
  * 
  * 📌 PROBLEM DESCRIPTION:
- *    Given an array of `n` integers, move all the zeroes present in the array 
- *    to the end while maintaining the relative order of the non-zero elements.
- *    In this brute force approach, we use a temporary array/vector to collect 
- *    all non-zero elements first, copy them back, and fill the rest with zeroes.
+ *    Given an integer array `nums`, move all `0`s to the end of it while 
+ *    maintaining the relative order of the non-zero elements.
+ *    Note that you must do this in-place without making a copy of the array.
  * 
  * 💡 COMPLEXITY ANALYSIS:
- *    - Time Complexity:  O(N) + O(nz) + O(N - nz) = O(2N) = O(N)
- *        • O(N) to collect non-zeros into temp
- *        • O(nz) to copy back non-zeros
- *        • O(N - nz) to fill remaining slots with 0
- *    - Space Complexity: O(N) in worst case (when all elements are non-zero)
+ *    - Brute Force Approach (Using Auxiliary Vector):
+ *        • Time Complexity:  O(2N) = O(N) - Two passes over array
+ *        • Space Complexity: O(N) - Temporary vector to collect non-zero elements
+ *    - Optimal Approach (Two Pointers - In-Place Swapping):
+ *        • Time Complexity:  O(N) - Single pass finding first zero and swapping non-zeroes
+ *        • Space Complexity: O(1) - Constant auxiliary space
  * 
  * ----------------------------------------------------------------------------
  * 🎯 TOP INTERVIEW QUESTIONS & DEEP-DIVE CONCEPTS:
  * ----------------------------------------------------------------------------
- * 1. Why is maintaining the relative order (stability) crucial?
- *    - Many real-world systems (e.g. log processing, event ranking) require 
- *      that valid active records retain their arrival/timestamp sequence.
+ * 1. How does the Two-Pointer approach avoid redundant swaps?
+ *    - Pointer `j` is positioned at the first occurrence of `0`.
+ *    - Pointer `i` searches for subsequent non-zero elements from `j + 1`.
+ *    - When `nums[i] != 0`, `swap(nums[i], nums[j])` is executed, and `j++` advances.
  * 
- * 2. Why is this approach not optimal?
- *    - It requires O(N) extra space. The problem on LeetCode 283 strictly 
- *      demands in-place modification with O(1) extra memory.
+ * 2. What happens if the array has no zeroes?
+ *    - The first loop finishes without setting `j != -1`. The function exits early in O(N).
  * 
- * 3. What are the edge cases for this problem?
- *    - All elements are 0: `[0, 0, 0]` -> remains `[0, 0, 0]`.
- *    - No zeroes present: `[1, 2, 3]` -> remains `[1, 2, 3]`.
- *    - Array of length 1: `[0]` or `[5]`.
+ * 3. Does this maintain the relative ordering of non-zero elements?
+ *    - Yes, non-zero elements are scanned from left to right and swapped sequentially.
+ * 
+ * 4. Can we overwrite non-zero elements and fill the tail with zeroes?
+ *    - Yes, an alternative 2-pass O(1) approach copies non-zero elements forward and
+ *      then zeroes out the remaining tail. Swapping is preferred as it minimizes writes.
  * 
  * ----------------------------------------------------------------------------
  * 🔗 SIMILAR PROBLEMS FOR PRACTICE:
  * ----------------------------------------------------------------------------
  * 1. LeetCode 283: Move Zeroes (Easy)
- * 2. LeetCode 27: Remove Element (Easy)
- * 3. GeeksforGeeks: Move all zeroes to end of array (Easy)
- * 4. Coding Ninjas: Move Zero's to End (Easy)
+ * 2. GeeksforGeeks: Move all zeroes to end of array (Easy)
+ * 3. Coding Ninjas: Move Zero's to End (Easy)
+ * 4. LeetCode 27: Remove Element (Easy)
  * ============================================================================
  */
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 // ============================================================================
-// BRUTE FORCE APPROACH: Using Temporary Array
+// 1. BRUTE FORCE APPROACH: Using Temporary Array
 // Time Complexity: O(2N) = O(N) | Space Complexity: O(N)
 // ============================================================================
 
-// Function to move all zeroes to the end using a temporary vector
-vector<int> moveZeroes(int n, vector<int> a) {
+vector<int> moveZeroesBruteForce(int n, vector<int> a) {
     // Step 1: Collect all non-zero elements into temporary vector
     vector<int> temp;
     for (int i = 0; i < n; i++) {
@@ -77,23 +79,49 @@ vector<int> moveZeroes(int n, vector<int> a) {
 }
 
 // ============================================================================
+// 2. OPTIMAL APPROACH: In-Place Two Pointers Swapping
+// Time Complexity: O(N) | Space Complexity: O(1)
+// ============================================================================
+
+void moveZeroesOptimal(vector<int> &nums) {
+    int n = nums.size();
+    int j = -1; // Pointer to the first zero element
+
+    // Step 1: Find the index of the first zero
+    for (int i = 0; i < n; i++) {
+        if (nums[i] == 0) {
+            j = i;
+            break;
+        }
+    }
+
+    // If no zero was found, array is already in desired state
+    if (j == -1) return;
+
+    // Step 2: Start scanning from (j + 1) to find non-zero elements and swap with zero at j
+    for (int i = j + 1; i < n; i++) {
+        if (nums[i] != 0) {
+            swap(nums[i], nums[j]);
+            j++; // Next index that is now 0
+        }
+    }
+}
+
+// ============================================================================
 // DRIVER CODE
 // ============================================================================
 
 int main() {
     vector<int> arr = {0, 1, 0, 3, 12};
-    int n = arr.size();
 
     cout << "Original Array: ";
     for (int x : arr) cout << x << " ";
     cout << endl;
 
-    vector<int> result = moveZeroes(n, arr);
+    moveZeroesOptimal(arr);
 
-    cout << "Array after moving zeroes to end: ";
-    for (int i = 0; i < n; i++) {
-        cout << result[i] << " ";
-    }
+    cout << "Array after moving zeroes to end (Optimal): ";
+    for (int x : arr) cout << x << " ";
     cout << endl;
 
     return 0;

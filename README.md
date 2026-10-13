@@ -1,11 +1,11 @@
-# 🚀 Ultimate C++ Arrays Mastery (41 Core DSA Problems)
+# 🚀 Ultimate C++ Arrays Mastery (Core DSA + LeetCode Problems)
 
 [![Language](https://img.shields.io/badge/Language-C%2B%2B17%20%2F%20C%2B%2B20-00599C?style=for-the-badge&logo=c%2B%2B)](https://en.cppreference.com/)
 [![Topic](https://img.shields.io/badge/Data%20Structures-Arrays%20%26%20Matrices-orange?style=for-the-badge)](https://leetcode.com/)
-[![Problems](https://img.shields.io/badge/Total%20Problems-41%20Curated-success?style=for-the-badge)](https://github.com/Kushagra901/dsa-arrays-cpp)
+[![Problems](https://img.shields.io/badge/Total%20Problems-55%20Curated-success?style=for-the-badge)](https://github.com/Kushagra901/dsa-arrays-cpp)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
-A production-grade, highly curated collection of **41 fundamental to advanced Array & Matrix problems** implemented in modern C++. Every problem file is completely self-contained and engineered to serve as a comprehensive revision guide for technical interviews at top-tier tech companies (FAANG, Tier-1 Product Firms).
+A production-grade, highly curated collection of **fundamental to advanced Array, Matrix & LeetCode problems** implemented in modern C++. Every problem file is completely self-contained and engineered to serve as a comprehensive revision guide for technical interviews at top-tier tech companies (FAANG, Tier-1 Product Firms).
 
 ---
 
@@ -20,7 +20,20 @@ Each C++ file in this repository is built as a self-contained learning module co
 
 ---
 
-## 📑 Complete Problem Index (1 to 41)
+## 📁 Repository Structure
+
+```
+dsa-arrays-cpp/
+├── prob1.cpp ... prob42.cpp      # 42 Core Fundamental DSA Array Problems
+├── leetcode array/               # 13 High-Frequency Curated LeetCode Array Problems
+│   ├── prob1.cpp ... prob13.cpp
+│   └── README.md
+└── README.md
+```
+
+---
+
+## 📑 Core Problem Index (1 to 42)
 
 | # | Problem Name | Primary Algorithm / Technique | Time Complexity | Space Complexity | Source File |
 |:---:|:---|:---|:---:|:---:|:---:|
@@ -65,6 +78,27 @@ Each C++ file in this repository is built as a self-contained learning module co
 | **39** | Merge Two Sorted Arrays in O(1) Space | Gap Method (Shell Sort Traversal) | `O((N+M) log(N+M))` | `O(1)` | [`prob39.cpp`](prob39.cpp) |
 | **40** | Count Subarrays with Given XOR K | Prefix XOR Frequency Map | `O(N)` | `O(N)` | [`prob40.cpp`](prob40.cpp) |
 | **41** | Repeating and Missing Number | Mathematical Equations (`S`, `S²`) & XOR | `O(N)` | `O(1)` | [`prob41.cpp`](prob41.cpp) |
+| **42** | Subarrays with Given XOR K (Alternative) | 3-Tier Multi-Approach & Frequency Hash Map | `O(N)` | `O(N)` | [`prob42.cpp`](prob42.cpp) |
+
+---
+
+## 🚀 LeetCode Curated Problems (`leetcode array/`)
+
+| # | LeetCode # | Problem Name | Primary Algorithm / Technique | Time Complexity | Space Complexity | Source File |
+|:---:|:---:|:---|:---|:---:|:---:|:---:|
+| **01** | — | Min and Max in Array | Pairwise Comparison / Tournament | `O(N)` (1.5N comps) | `O(1)` | [`leetcode array/prob1.cpp`](leetcode%20array/prob1.cpp) |
+| **02** | 1186 | Maximum Subarray Sum with One Deletion | State-Optimized DP (Kadane Extension) | `O(N)` | `O(1)` | [`leetcode array/prob2.cpp`](leetcode%20array/prob2.cpp) |
+| **03** | 1749 | Maximum Absolute Sum of Any Subarray | Dual Kadane / Prefix Range | `O(N)` | `O(1)` | [`leetcode array/prob3.cpp`](leetcode%20array/prob3.cpp) |
+| **04** | 523 | Continuous Subarray Sum | Prefix Sum Modulo + Hash Map | `O(N)` | `O(min(N, K))` | [`leetcode array/prob4.cpp`](leetcode%20array/prob4.cpp) |
+| **05** | 1310 | XOR Queries of a Subarray | In-Place Prefix XOR Array | `O(N + Q)` | `O(1)` aux | [`leetcode array/prob5.cpp`](leetcode%20array/prob5.cpp) |
+| **06** | 59 | Spiral Matrix II | 4 Boundary Pointers (Top, Bottom, Left, Right) | `O(N²)` | `O(1)` aux | [`leetcode array/prob6.cpp`](leetcode%20array/prob6.cpp) |
+| **07** | 1886 | Determine Whether Matrix Can Be Obtained By Rotation | Transpose + Row Reversal (4 Rotations) | `O(N²)` | `O(1)` | [`leetcode array/prob7.cpp`](leetcode%20array/prob7.cpp) |
+| **08** | 289 | Game of Life | 2-Bit State Encoding (Bit Manipulation) | `O(M × N)` | `O(1)` | [`leetcode array/prob8.cpp`](leetcode%20array/prob8.cpp) |
+| **09** | 525 | Contiguous Array (Equal 0s and 1s) | Prefix Sum (0 as -1) + Hash Map | `O(N)` | `O(N)` | [`leetcode array/prob9.cpp`](leetcode%20array/prob9.cpp) |
+| **10** | 674 | Longest Continuous Increasing Subsequence | Greedy Running Streak / Sliding Window | `O(N)` | `O(1)` | [`leetcode array/prob10.cpp`](leetcode%20array/prob10.cpp) |
+| **11** | 1567 | Maximum Length of Subarray With Positive Product | DP State Tracking (`posCount`, `negCount`) | `O(N)` | `O(1)` | [`leetcode array/prob11.cpp`](leetcode%20array/prob11.cpp) |
+| **12** | 713 | Subarray Product Less Than K | Monotonic Sliding Window / Two Pointers | `O(N)` | `O(1)` | [`leetcode array/prob12.cpp`](leetcode%20array/prob12.cpp) |
+| **13** | 918 | Maximum Sum Circular Subarray | Dual Kadane (`maxSum` vs `total - minSum`) | `O(N)` | `O(1)` | [`leetcode array/prob13.cpp`](leetcode%20array/prob13.cpp) |
 
 ---
 
@@ -78,14 +112,21 @@ Arrays & Matrix Patterns
 │   └── 3-Way Partitioning / DNF (prob18)
 ├── Prefix Metrics & Frequency Hashing
 │   ├── Prefix Sums for Subarray Search (prob16, prob29, prob38)
-│   └── Prefix XOR Properties (prob40)
+│   ├── Prefix XOR Properties (prob40, prob42, LC 1310)
+│   └── Remainder Congruence Hashing (LC 523, LC 525)
 ├── Voting & Greedy Strategies
 │   ├── Boyer-Moore Majority Voting (prob19, prob31)
 │   └── Greedy Running Min/Max (prob21, prob24)
 ├── Matrix Geometric Manipulations
-│   ├── Transpose & Reverse (prob27)
-│   ├── Boundary Traversal (prob28)
-│   └── In-Place Coordinate Markers (prob26)
+│   ├── Transpose & Reverse (prob27, LC 1886)
+│   ├── Boundary Traversal (prob28, LC 59)
+│   ├── In-Place Coordinate Markers (prob26)
+│   └── 2-Bit State Encoding (LC 289)
+├── Dynamic Programming & Kadane Extensions
+│   ├── Linear Maximum Subarray (prob20)
+│   ├── Maximum with One Deletion (LC 1186)
+│   ├── Maximum Absolute Sum (LC 1749)
+│   └── Circular Maximum Subarray (LC 918)
 ├── Divide & Conquer / Sorting Enhancements
 │   ├── Modified Merge Sort for Inversions (prob33)
 │   ├── Modified Merge Sort for Reverse Pairs (prob34)
@@ -102,20 +143,17 @@ Arrays & Matrix Patterns
 You can compile any problem using standard `g++` (C++17 or higher):
 
 ```bash
-# Compile
+# Compile core problem
 g++ -std=c++17 prob1.cpp -o prob1
+
+# Compile LeetCode problem
+g++ -std=c++17 "leetcode array/prob1.cpp" -o leetcode_prob1
 
 # Execute on Windows
 prob1.exe
 
 # Execute on Linux / macOS
 ./prob1
-```
-
-To run all files with syntax validation:
-```bash
-# Using g++ syntax check
-g++ -fsyntax-only -std=c++17 prob*.cpp
 ```
 
 ---

@@ -96,7 +96,7 @@ vector<int> majorityElement(const vector<int> &v) {
     int threshold = (n / 3);
     if (cnt1 > threshold) ls.push_back(el1);
     if (cnt2 > threshold) ls.push_back(el2);
-
+    sort(ls.begin(), ls.end()); 
     return ls;
 }
 

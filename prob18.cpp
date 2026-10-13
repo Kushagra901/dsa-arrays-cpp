@@ -1,40 +1,44 @@
 /**
  * ============================================================================
- * PROBLEM: Sort an Array of 0s, 1s, and 2s (Dutch National Flag Algorithm)
+ * PROBLEM: Sort an Array of 0s, 1s, and 2s (Dutch National Flag Problem)
  * ============================================================================
  * 
  * 📌 PROBLEM DESCRIPTION:
- *    Given an array `arr` containing only 0s, 1s, and 2s, sort the array in-place 
- *    in ascending order without using the library's sort function.
+ *    Given an array `arr` consisting of only 0s, 1s, and 2s, sort the array 
+ *    in-place in non-decreasing order without using the library sort function.
  * 
  * 💡 COMPLEXITY ANALYSIS:
- *    - Optimal Approach (Dutch National Flag - DNF 3-Way Partition):
- *        • Time Complexity:  O(N) - Single pass (each element processed at most once)
- *        • Space Complexity: O(1) - Constant auxiliary space, in-place swaps
- *    - Better Approach (Counting Sort - 2 Pass):
- *        • Time Complexity:  O(2N) = O(N) (Pass 1 count 0s,1s,2s; Pass 2 overwrite)
+ *    - 1. Brute Force Approach (Sorting):
+ *        • Time Complexity:  O(N log N) - Standard comparison sort
  *        • Space Complexity: O(1)
+ *    - 2. Better Approach (Counting Sort):
+ *        • Time Complexity:  O(2N) - 1st pass counts frequencies, 2nd pass overwrites array
+ *        • Space Complexity: O(1) - Constant variables (c0, c1, c2)
+ *    - 3. Optimal Approach (Dutch National Flag - 3-Way Partitioning):
+ *        • Time Complexity:  O(N) - Strictly single pass
+ *        • Space Complexity: O(1) - Modifies array completely in-place
  * 
  * ----------------------------------------------------------------------------
  * 🎯 TOP INTERVIEW QUESTIONS & DEEP-DIVE CONCEPTS:
  * ----------------------------------------------------------------------------
- * 1. What are the 3 pointer invariants in the Dutch National Flag Algorithm?
- *    - Region [0 ... low - 1]: Contains only 0s.
- *    - Region [low ... mid - 1]: Contains only 1s.
- *    - Region [mid ... high]: Unsorted / unprocessed elements.
- *    - Region [high + 1 ... n - 1]: Contains only 2s.
+ * 1. What are the invariants maintained in the Dutch National Flag algorithm?
+ *    - `[0 ... low - 1]`:       All 0s
+ *    - `[low ... mid - 1]`:     All 1s
+ *    - `[mid ... high]`:        Unsorted elements (yet to be classified)
+ *    - `[high + 1 ... n - 1]`:  All 2s
  * 
- * 2. Why don't we increment `mid` when `arr[mid] == 2`?
- *    - Because the element swapped from `arr[high]` is unknown (it could be 0, 1, or 2).
- *      `mid` must stay at its position to evaluate the newly swapped element in the next iteration!
+ * 2. Why is `mid` NOT incremented when `arr[mid] == 2`?
+ *    - When swapping `arr[mid]` with `arr[high]`, the element brought from `high`
+ *      has not yet been examined (it could be 0, 1, or 2). Hence, `mid` must examine
+ *      it on the next iteration while `high--` shrinks the 2s boundary.
  * 
- * 3. Why DO we increment `mid` when `arr[mid] == 0`?
- *    - Because `arr[low]` was previously evaluated (it could only be a 1), so after swapping,
- *      `arr[mid]` is guaranteed to be 1. Both `low` and `mid` can safely advance.
+ * 3. Why IS `mid` incremented when `arr[mid] == 0`?
+ *    - The element at `low` before the swap was guaranteed to be a 1 (or `low == mid`),
+ *      so after swapping, `arr[mid]` is guaranteed to be 1, which is valid for the middle region.
  * 
- * 4. Can DNF be used for 3-way partitioning in QuickSort?
- *    - Yes! QuickSort with 3-way DNF partitioning avoids O(N^2) worst-case performance 
- *      on arrays with large numbers of duplicate keys (Fat Pivot).
+ * 4. Can this algorithm be extended to 4 colors or general pivot partitioning?
+ *    - Yes, Dutch National Flag is the foundation of 3-way Quicksort (Bentley-McIlroy),
+ *      which handles arrays with heavy duplicates in O(N) time.
  * 
  * ----------------------------------------------------------------------------
  * 🔗 SIMILAR PROBLEMS FOR PRACTICE:
@@ -42,7 +46,7 @@
  * 1. LeetCode 75: Sort Colors (Medium)
  * 2. GeeksforGeeks: Sort an array of 0s, 1s and 2s (Easy)
  * 3. Coding Ninjas: Sort 0 1 2 (Easy)
- * 4. LeetCode 324: Wiggle Sort II (Medium)
+ * 4. LeetCode 283: Move Zeroes (Easy)
  * ============================================================================
  */
 
@@ -53,11 +57,33 @@
 using namespace std;
 
 // ============================================================================
-// OPTIMAL APPROACH: Dutch National Flag Algorithm (3-Way Partitioning)
+// 1. BETTER APPROACH: Counting Frequencies
+// Time Complexity: O(2N) | Space Complexity: O(1)
+// ============================================================================
+
+void sortColorsCounting(vector<int> &arr, int n) {
+    int c0 = 0, c1 = 0, c2 = 0;
+
+    // Step 1: Count occurrences of 0, 1, and 2
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 0) c0++;
+        else if (arr[i] == 1) c1++;
+        else c2++;
+    }
+
+    // Step 2: Overwrite the original array
+    int idx = 0;
+    while (c0--) arr[idx++] = 0;
+    while (c1--) arr[idx++] = 1;
+    while (c2--) arr[idx++] = 2;
+}
+
+// ============================================================================
+// 2. OPTIMAL APPROACH: Dutch National Flag Algorithm (3-Way Partitioning)
 // Time Complexity: O(N) | Space Complexity: O(1)
 // ============================================================================
 
-void sortArray(vector<int>& arr, int n) {
+void sortArray(vector<int> &arr, int n) {
     int low = 0;       // Boundary for 0s
     int mid = 0;       // Scanner pointer for 1s
     int high = n - 1;  // Boundary for 2s
@@ -97,7 +123,7 @@ int main() {
 
     sortArray(arr, n);
 
-    cout << "Sorted array:   ";
+    cout << "Sorted array (Optimal DNF): ";
     for (int num : arr) {
         cout << num << " ";
     }

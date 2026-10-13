@@ -1,39 +1,45 @@
 /**
  * ============================================================================
- * PROBLEM: Pascal's Triangle (3 Key Variations)
+ * PROBLEM: Pascal's Triangle (All 3 Variations)
  * ============================================================================
  * 
  * 📌 PROBLEM DESCRIPTION:
- *    Variation 1: Given row number r and column number c, find the element at position (r, c).
- *    Variation 2: Given row number n, generate and print the entire n-th row of Pascal's triangle.
- *    Variation 3: Given integer n, generate all rows of Pascal's triangle up to row n.
+ *    Pascal's Triangle is a triangular array of integers where each number 
+ *    is the sum of the two numbers directly above it.
+ *    This file implements all three standard interview variations:
+ *      1. Given row `r` and column `c`, find the element at position (r, c).
+ *      2. Given row number `n`, print the entire n-th row in O(n) time.
+ *      3. Given `numRows`, generate the entire Pascal's Triangle up to `numRows`.
  * 
  * 💡 COMPLEXITY ANALYSIS:
  *    - Variation 1 (Element at r, c):
- *        • Time Complexity:  O(c) - Calculating nCr(r-1, c-1) in linear time
- *        • Space Complexity: O(1)
- *    - Variation 2 (N-th row generation):
- *        • Time Complexity:  O(N) - Calculating elements iteratively in single pass
- *        • Space Complexity: O(N) to store row
- *    - Variation 3 (Full Pascal's Triangle):
- *        • Time Complexity:  O(N^2) - Generating 1 + 2 + 3 + ... + N = N*(N+1)/2 elements
- *        • Space Complexity: O(N^2) to return the 2D triangle
+ *        • Formula: `(r - 1) C (c - 1)`
+ *        • Time Complexity:  O(c) - Linear loop computing combination
+ *        • Space Complexity: O(1) - Constant auxiliary space
+ *    - Variation 2 (Generate n-th Row):
+ *        • Time Complexity:  O(N) - Direct iterative formula `ans = ans * (row - col) / col`
+ *        • Space Complexity: O(N) - Result vector
+ *    - Variation 3 (Generate Full Triangle):
+ *        • Time Complexity:  O(N^2) - Generating all N rows
+ *        • Space Complexity: O(N^2) - 2D matrix storage for triangle
  * 
  * ----------------------------------------------------------------------------
  * 🎯 TOP INTERVIEW QUESTIONS & DEEP-DIVE CONCEPTS:
  * ----------------------------------------------------------------------------
- * 1. What mathematical formula gives the element at row r and column c (1-indexed)?
- *    - The element is nCr(r - 1, c - 1) = (r - 1)! / ((c - 1)! * (r - c)!).
+ * 1. How is combinatorics `nCr` computed in O(r) time without factorial overflow?
+ *    - `nCr = (n * (n - 1) * ... * (n - r + 1)) / (1 * 2 * ... * r)`
+ *    - By multiplying and dividing iteratively, intermediate numbers stay small:
+ *      `res = res * (n - i) / (i + 1)`.
  * 
- * 2. How do we compute nCr(n, r) in O(r) time without factorial overflow?
- *    - Multiply (n - i) and divide by (i + 1) incrementally in a loop from i = 0 to r - 1.
+ * 2. Why does the naive recursive approach `val(r, c) = val(r-1, c-1) + val(r-1, c)` have exponential complexity?
+ *    - Without memoization, it branches into overlapping subproblems like Fibonacci,
+ *      resulting in O(2^N) time. Iterative combinatorics reduces it to O(c).
  * 
- * 3. How do we generate an entire row in O(N) time without recomputing full combinations?
- *    - The next element is derived from current element: next = curr * (row - col) / col.
+ * 3. What is the relation between Pascal's Triangle and Binomial Theorem?
+ *    - The n-th row represents the coefficients of the polynomial expansion of `(a + b)^n`.
  * 
- * 4. What are some properties of Pascal's Triangle?
- *    - Sum of elements in row n (0-indexed) is 2^n.
- *    - Each row is symmetric: row[i] == row[n - 1 - i].
+ * 4. Can row generation be done in-place with O(1) extra auxiliary space?
+ *    - Yes, each row can be computed directly from the previous row or generated in O(N) independently.
  * 
  * ----------------------------------------------------------------------------
  * 🔗 SIMILAR PROBLEMS FOR PRACTICE:
@@ -64,6 +70,7 @@ long long nCr(int n, int r) {
     return res;
 }
 
+// 1-indexed row and column
 long long pascalTriangleElement(int r, int c) {
     return nCr(r - 1, c - 1);
 }
@@ -104,19 +111,19 @@ vector<vector<int>> pascalTriangle(int n) {
 // ============================================================================
 
 int main() {
-    // Variation 1
+    // Variation 1: Element at (5, 3)
     int r = 5, c = 3;
-    cout << "Variation 1: Element at (" << r << ", " << c << ") is: " 
+    cout << "Variation 1: Element at row " << r << ", col " << c << " is: " 
          << pascalTriangleElement(r, c) << "\n\n";
 
-    // Variation 2
+    // Variation 2: Row 5
     int nRow = 5;
     cout << "Variation 2: Row " << nRow << " is: ";
     vector<int> row5 = generateRow(nRow);
     for (int val : row5) cout << val << " ";
     cout << "\n\n";
 
-    // Variation 3
+    // Variation 3: Full Triangle (first 5 rows)
     int n = 5;
     cout << "Variation 3: Full Pascal's Triangle (first " << n << " rows):\n";
     vector<vector<int>> triangle = pascalTriangle(n);

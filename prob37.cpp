@@ -4,47 +4,43 @@
  * ============================================================================
  * 
  * 📌 PROBLEM DESCRIPTION:
- *    Given an array of intervals where `intervals[i] = [start_i, end_i]`, 
- *    merge all overlapping intervals, and return an array of the non-overlapping 
- *    intervals that cover all the intervals in the input.
+ *    Given an array of `intervals` where `intervals[i] = [start_i, end_i]`, 
+ *    merge all overlapping intervals, and return an array of the 
+ *    non-overlapping intervals that cover all the intervals in the input.
  * 
  * 💡 COMPLEXITY ANALYSIS:
- *    - Optimal Approach (Sort by Start Time + Single Linear Pass):
- *        • Time Complexity:  O(N log N) for sorting + O(N) for merging = O(N log N)
- *        • Space Complexity: O(N) to store merged intervals (or O(1) auxiliary)
- *    - Brute Force Approach (Check all interval overlaps with nested loop):
- *        • Time Complexity:  O(N^2)
- *        • Space Complexity: O(N)
+ *    - 1. Brute Force Approach (Sorting + Nested Lookahead):
+ *        • Time Complexity:  O(N log N) + O(N^2) = O(N^2)
+ *        • Space Complexity: O(N) auxiliary space for result
+ *    - 2. Optimal Approach (Sorting + Linear Greedy Merge):
+ *        • Time Complexity:  O(N log N) - Sorting intervals + O(N) single pass merge
+ *        • Space Complexity: O(N) - Storage for merged intervals list
  * 
  * ----------------------------------------------------------------------------
  * 🎯 TOP INTERVIEW QUESTIONS & DEEP-DIVE CONCEPTS:
  * ----------------------------------------------------------------------------
- * 1. Why is sorting by start time `intervals[i][0]` essential?
- *    - Sorting guarantees that if an interval overlaps with any previous interval, 
- *      it MUST overlap with the most recently added interval in the merged list (`ans.back()`).
- *      This reduces the search space from O(N) to O(1)!
+ * 1. Why do we sort intervals by their start times?
+ *    - Sorting guarantees that if an interval overlaps with any previous interval,
+ *      it must overlap with the latest (most recently added) interval in our answer list.
  * 
- * 2. How do you merge intervals in a single pass?
- *    - If `ans.empty() || arr[i][0] > ans.back()[1]`: No overlap, push as a new interval.
- *    - Else: Overlap detected! Extend the end time: `ans.back()[1] = max(ans.back()[1], arr[i][1])`.
+ * 2. How do we determine if two intervals [s1, e1] and [s2, e2] overlap (assuming s1 <= s2)?
+ *    - They overlap if and only if `s2 <= e1`.
+ *    - The merged interval will have start `s1` and end `max(e1, e2)`.
  * 
- * 3. What is the Insert Interval problem (LeetCode 57)?
- *    - Insert a new interval into an already sorted list of non-overlapping intervals 
- *      in O(N) time without re-sorting.
+ * 3. What if intervals are already sorted?
+ *    - The algorithm becomes pure O(N) linear time.
  * 
- * 4. What is the Meeting Rooms II problem (LeetCode 253 / Minimum Platforms)?
- *    - Find the minimum number of conference rooms required for overlapping meeting intervals 
- *      using a Min-Heap (or sorting start/end times separately).
+ * 4. What is the follow-up: "Insert Interval" (LeetCode 57)?
+ *    - Insert a new interval into an already sorted list of non-overlapping intervals
+ *      and merge if necessary in O(N) time without full re-sorting.
  * 
  * ----------------------------------------------------------------------------
  * 🔗 SIMILAR PROBLEMS FOR PRACTICE:
  * ----------------------------------------------------------------------------
  * 1. LeetCode 56: Merge Intervals (Medium)
  * 2. LeetCode 57: Insert Interval (Medium)
- * 3. LeetCode 252: Meeting Rooms (Easy)
- * 4. LeetCode 253: Meeting Rooms II (Medium)
- * 5. GeeksforGeeks: Overlapping Intervals (Medium)
- * 6. Coding Ninjas: Merge Overlapping Subintervals (Medium)
+ * 3. LeetCode 435: Non-overlapping Intervals (Medium)
+ * 4. GeeksforGeeks: Overlapping Intervals (Medium)
  * ============================================================================
  */
 
@@ -55,7 +51,41 @@
 using namespace std;
 
 // ============================================================================
-// OPTIMAL APPROACH: Sorting + Linear Greedy Merge
+// 1. BRUTE FORCE APPROACH: Sorting + Nested Interval Search
+// Time Complexity: O(N log N) + O(N^2) | Space Complexity: O(N)
+// ============================================================================
+
+vector<vector<int>> mergeOverlappingIntervalsBrute(vector<vector<int>> &arr) {
+    int n = arr.size();
+    if (n <= 1) return arr;
+
+    sort(arr.begin(), arr.end());
+    vector<vector<int>> ans;
+
+    for (int i = 0; i < n; i++) {
+        int start = arr[i][0];
+        int end = arr[i][1];
+
+        // Skip if current interval is already covered by previous merged interval
+        if (!ans.empty() && end <= ans.back()[1]) {
+            continue;
+        }
+
+        // Check for subsequent overlapping intervals
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j][0] <= end) {
+                end = max(end, arr[j][1]);
+            } else {
+                break;
+            }
+        }
+        ans.push_back({start, end});
+    }
+    return ans;
+}
+
+// ============================================================================
+// 2. OPTIMAL APPROACH: Sorting + Linear Greedy Merge
 // Time Complexity: O(N log N) | Space Complexity: O(N)
 // ============================================================================
 
@@ -68,7 +98,7 @@ vector<vector<int>> mergeOverlappingIntervals(vector<vector<int>> &arr) {
 
     vector<vector<int>> ans;
 
-    // Step 2: Traverse through sorted intervals and merge
+    // Step 2: Traverse through sorted intervals and merge in a single pass
     for (int i = 0; i < n; i++) {
         // If ans is empty or current interval does not overlap with previous interval
         if (ans.empty() || arr[i][0] > ans.back()[1]) {
@@ -98,7 +128,7 @@ int main() {
 
     vector<vector<int>> ans = mergeOverlappingIntervals(arr);
 
-    cout << "Merged Non-Overlapping Intervals: ";
+    cout << "Merged Non-Overlapping Intervals (Optimal): ";
     for (const auto &it : ans) {
         cout << "[" << it[0] << ", " << it[1] << "] ";
     }

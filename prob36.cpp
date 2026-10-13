@@ -1,69 +1,96 @@
 /**
  * ============================================================================
- * PROBLEM: 4Sum (Find Unique Quadruplets with Target Sum)
+ * PROBLEM: 4Sum (Find All Unique Quadruplets with Target Sum)
  * ============================================================================
  * 
  * 📌 PROBLEM DESCRIPTION:
  *    Given an array `nums` of `n` integers and an integer `target`, return an 
  *    array of all unique quadruplets `[nums[a], nums[b], nums[c], nums[d]]` 
  *    such that:
- *    - `0 <= a, b, c, d < n`
- *    - `a, b, c, and d` are all distinct
- *    - `nums[a] + nums[b] + nums[c] + nums[d] == target`
+ *      - 0 <= a, b, c, d < n
+ *      - a, b, c, and d are distinct indices.
+ *      - nums[a] + nums[b] + nums[c] + nums[d] == target
  *    The solution set must not contain duplicate quadruplets.
  * 
  * 💡 COMPLEXITY ANALYSIS:
- *    - Optimal Approach (Sorting + 2 Fixed Loops + Two Pointers):
- *        • Time Complexity:  O(N^3) - Two outer loops O(N^2) and inner two-pointer scan O(N)
- *        • Space Complexity: O(1) auxiliary space (excluding output quadruplets)
- *    - Better Approach (Hash Set for 4th element):
- *        • Time Complexity:  O(N^3 * log(set_size))
- *        • Space Complexity: O(N) + O(unique_quadruplets)
+ *    - 1. Better Approach (3 Nested Loops + Hash Set):
+ *        • Time Complexity:  O(N^3 * log(M)) - 3 loops + hash set lookups
+ *        • Space Complexity: O(2 * quadruplets) + O(N) auxiliary hash set
+ *    - 2. Optimal Approach (Sorting + Two Pointers):
+ *        • Time Complexity:  O(N^3) - Two nested loops with a two-pointer scan
+ *        • Space Complexity: O(1) auxiliary space (excluding returned result list)
  * 
  * ----------------------------------------------------------------------------
  * 🎯 TOP INTERVIEW QUESTIONS & DEEP-DIVE CONCEPTS:
  * ----------------------------------------------------------------------------
- * 1. Why is `long long` sum computation essential in 4Sum?
- *    - If 4 numbers are close to 10^9 (e.g. 10^9 + 10^9 + 10^9 + 10^9), their sum 
- *      is 4 * 10^9, which overflows standard 32-bit signed `int` (INT_MAX ≈ 2.14 * 10^9).
- *      Accumulating into `long long` prevents undefined overflow behavior.
+ * 1. Why do we cast element sums to `long long`?
+ *    - In extreme test cases, the sum of four 32-bit integers can exceed 
+ *      `INT_MAX` (2 * 10^9) or fall below `INT_MIN`, causing signed integer overflow.
  * 
- * 2. How do we skip duplicate quadruplets cleanly in O(1) extra space?
- *    - Skip duplicate `i`: if (i > 0 && nums[i] == nums[i - 1]) continue;
- *    - Skip duplicate `j`: if (j > i + 1 && nums[j] == nums[j - 1]) continue;
- *    - Skip duplicate `k` and `l`: after finding a quadruplet, advance pointers past identical values:
- *      while (k < l && nums[k] == nums[k - 1]) k++; and while (k < l && nums[l] == nums[l + 1]) l--;.
+ * 2. How are duplicate quadruplets avoided without using an expensive std::set?
+ *    - By sorting the array first and explicitly skipping adjacent duplicate values:
+ *      `if (i > 0 && nums[i] == nums[i - 1]) continue;`
+ *      `if (j > i + 1 && nums[j] == nums[j - 1]) continue;`
+ *      and skipping duplicates when advancing `k` and `l`.
  * 
- * 3. How does this generalize to K-Sum (LeetCode generalized problem)?
- *    - Recursively reduce K-Sum to (K - 1)-Sum by fixing elements, down to base case 2-Sum (Two Pointers) in O(N^(K - 1)) time.
+ * 3. How does this generalize k-Sum?
+ *    - Generalized k-Sum uses recursion to reduce k to 2, where Two Pointers is applied in O(N^(k-1)).
  * 
- * 4. What is 4Sum II (LeetCode 454)?
- *    - Given 4 separate lists: compute sums of pairs (A[i] + B[j]) in a hash map, 
- *      then find -(C[k] + D[l]) in O(N^2) time and O(N^2) space.
+ * 4. Can we apply early exit pruning?
+ *    - Yes, after sorting, if `nums[i] + nums[i+1] + nums[i+2] + nums[i+3] > target`, break.
+ *    - If `nums[i] + nums[n-3] + nums[n-2] + nums[n-1] < target`, continue.
  * 
  * ----------------------------------------------------------------------------
  * 🔗 SIMILAR PROBLEMS FOR PRACTICE:
  * ----------------------------------------------------------------------------
  * 1. LeetCode 18: 4Sum (Medium)
- * 2. LeetCode 454: 4Sum II (Medium)
- * 3. LeetCode 15: 3Sum (Medium)
- * 4. GeeksforGeeks: Find all four sum numbers (Medium)
- * 5. Coding Ninjas: 4Sum (Medium)
+ * 2. LeetCode 15: 3Sum (Medium)
+ * 3. LeetCode 1: Two Sum (Easy)
+ * 4. LeetCode 454: 4Sum II (Medium)
  * ============================================================================
  */
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <set>
 
 using namespace std;
 
 // ============================================================================
-// OPTIMAL APPROACH: Sorting + 2 Outer Loops + Two Pointers
+// 1. BETTER APPROACH: 3 Loops + Hash Set
+// Time Complexity: O(N^3) | Space Complexity: O(N) + O(quadruplets)
+// ============================================================================
+
+vector<vector<int>> fourSumBetter(vector<int> &nums, int target) {
+    int n = nums.size();
+    set<vector<int>> uniqueQuads;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            set<long long> hashset;
+            for (int k = j + 1; k < n; k++) {
+                long long sum = (long long)nums[i] + nums[j] + nums[k];
+                long long fourth = (long long)target - sum;
+
+                if (hashset.find(fourth) != hashset.end()) {
+                    vector<int> temp = {nums[i], nums[j], nums[k], (int)fourth};
+                    sort(temp.begin(), temp.end());
+                    uniqueQuads.insert(temp);
+                }
+                hashset.insert(nums[k]);
+            }
+        }
+    }
+    return vector<vector<int>>(uniqueQuads.begin(), uniqueQuads.end());
+}
+
+// ============================================================================
+// 2. OPTIMAL APPROACH: Sorting + 2 Outer Loops + Two Pointers
 // Time Complexity: O(N^3) | Space Complexity: O(1) auxiliary
 // ============================================================================
 
-vector<vector<int>> fourSum(vector<int>& nums, int target) {
+vector<vector<int>> fourSum(vector<int> &nums, int target) {
     int n = nums.size(); 
     vector<vector<int>> ans;
 
@@ -121,7 +148,7 @@ int main() {
 
     vector<vector<int>> ans = fourSum(nums, target);
 
-    cout << "Unique quadruplets:\n";
+    cout << "Unique quadruplets (Optimal Two Pointers):\n";
     for (const auto &it : ans) {
         cout << "[ ";
         for (int ele : it) {
